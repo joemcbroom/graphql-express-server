@@ -1,10 +1,21 @@
 import express from 'express';
 const router = express.Router();
-import { querySpaceX } from '../controllers/spacex.js';
+import schema from '../schema/schema.js';
+
+import expressGraphql from 'express-graphql';
+
+const graphqlHTTP = expressGraphql.graphqlHTTP;
 
 router.get('/', (req, res) => {
 	res.send('hi');
 });
-router.get('/spacex', querySpaceX);
+
+router.use(
+	'/graphql',
+	graphqlHTTP({
+		schema: schema,
+		graphiql: true,
+	})
+);
 
 export default router;

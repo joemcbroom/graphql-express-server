@@ -1,6 +1,6 @@
 import graphql from 'graphql';
-const { GraphQLString, GraphQLObjectType, GraphQLSchema, GraphQLID } = graphql;
-import { getPerson, getCompany } from '../controllers/mockPeople.js';
+const { GraphQLString, GraphQLObjectType, GraphQLSchema, GraphQLID, GraphQLList } = graphql;
+import { getPerson, getCompany, getPeople } from '../controllers/mockPeople.js';
 
 const PersonType = new GraphQLObjectType({
 	name: 'Person',
@@ -29,7 +29,8 @@ const CompanyType = new GraphQLObjectType({
 
 const RootQuery = new GraphQLObjectType({
 	name: 'RootQueryType',
-	fields: {
+	description: 'Root query',
+	fields: () => ({
 		person: {
 			type: PersonType,
 			args: { id: { type: GraphQLString } },
@@ -39,10 +40,15 @@ const RootQuery = new GraphQLObjectType({
 				return person;
 			},
 		},
-	},
+		people: {
+			type: new GraphQLList(PersonType),
+			resolve: async () => await getPeople(),
+		},
+	}),
 });
 
-const query = new GraphQLSchema({
+export default new GraphQLSchema({
 	query: RootQuery,
 });
-export default query;
+
+// export default query;
